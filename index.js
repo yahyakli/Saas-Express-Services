@@ -1,12 +1,17 @@
 import express from "express";
-// import productRouter from "./Controllers/ProductController.js";
 const app = express();
 import  mongoose from "mongoose";
 import dotenv from "dotenv";
-
+import projectRoutes from './routes/projectRoutes.js';
+import projectMemberRoutes from "./routes/projectMemberRoutes.js";
 dotenv.config();
 
-// app.use("/product", productRouter)
+
+app.use(express.json());
+
+app.use('/api/v1/projects', projectRoutes);
+app.use('/api/v1/projects', projectMemberRoutes);
+
 
 const startServer = () => {
     try{
