@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "ref": "test",
+        "description": "test",
+        "prix": 10,
+        "QteStock": 100,
+        "_id": "67137e95a7597c24d3718a05"
+    },
+    {
+        "id": 2,
+        "ref": "test",
+        "description": "test",
+        "prix": 200,
+        "QteStock": 100,
+        "_id": "6716a5276adfdc1ec60ad388"
+    }
+]
