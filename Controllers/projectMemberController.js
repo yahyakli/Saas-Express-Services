@@ -20,11 +20,12 @@ export const addMember = async (req, res) => {
         }
 
         // Check if the user is already a member
-        if (project.members.includes(userId)) {
+        const isMember = project.members.some(member => member.id === userResponse.data.id);
+        if (isMember) {
             return res.status(400).json({ message: 'User is already a member of this project' });
         }
 
-        project.members.push(userId);
+        project.members.push(userResponse.data);
         await project.save();
 
         return res.status(200).json({ message: 'User added to project', project });
@@ -51,13 +52,14 @@ export const removeMember = async (req, res) => {
         }
 
         // Check if the user is not a member in project
-        if (!project.members.includes(userId)) {
+        const isMember = project.members.some(member => member.id === userResponse.data.id); // Adjust this based on your user object structure
+        if (!isMember) {
             return res.status(400).json({ message: 'User is not a member in this project' });
         }
 
-        project.members = project.members.filter(member => member.toString() !== userId);
-        await project.save();
+        project.members = project.members.filter(member => member.id !== userResponse.data.id);
 
+        await project.save();
         return res.status(200).json({ message: 'User removed from project', project });
     } catch (error) {
         return res.status(500).json({ message: 'Error removing member from project', error });
@@ -74,13 +76,7 @@ export const getMembers = async (req, res) => {
             return res.status(404).json({ message: 'Project not found' });
         }
 
-        const usersResponse = await axios.get(`http://localhost:9090/api/v1/auth/users`);
-        const allUsers = usersResponse.data; 
-
-
-        const membersInfo = allUsers.filter(user => project.members.includes(user.id));
-
-        return res.status(200).json({ members: membersInfo });
+        return res.status(200).json({ members: project.members });
     } catch (error) {
         return res.status(500).json({ message: 'Error fetching project members', error });
     }

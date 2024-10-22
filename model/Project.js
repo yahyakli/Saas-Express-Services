@@ -19,7 +19,7 @@ const projectSchema = new Schema({
         required: true,
     },
     members: [{
-        type: String, // Array of User UUIDs from PostgreSQL
+        type: Object,
     }],
     startDate: {
         type: Date,
