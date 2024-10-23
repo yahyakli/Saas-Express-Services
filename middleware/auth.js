@@ -1,18 +1,28 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import { Buffer } from 'buffer';
+import dotenv from 'dotenv'
+dotenv.config();
+
+const secretKey = Buffer.from(process.env.JWT_SECRET, 'base64');
 
 const authenticateJWT = (req, res, next) => {
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1]; // Expecting 'Bearer TOKEN'
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-        return res.status(401).json({ message: 'Access token is missing or invalid' });
-    }
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.id; // Attach user data to request
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: 'Invalid token' });
+        // Verifying token with decoded secret and specifying HS256 algorithm
+        jwt.verify(token, secretKey, { algorithms: ['HS256'] }, (err, decoded) => {
+            if (err) {
+                console.error('JWT Verification Error:', err);
+                return res.status(403).json({ message: 'Forbidden - Invalid or Expired Token' });
+            }
+
+            req.user = decoded; // Assuming decoded contains user info
+            next();
+        });
+    } else {
+        return res.status(401).json({ message: 'Unauthorized - No Token Provided' });
     }
 };
 
