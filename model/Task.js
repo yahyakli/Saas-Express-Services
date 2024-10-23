@@ -2,12 +2,23 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const taskSchema = Schema({
-    title: {
+    name: {
         type: String,
         required: true,
     },
     description: {
         type: String,
+    },
+    project_id:{
+        type:String,
+        required:true,
+    },
+    assigned_to:{
+        type:String,
+        required:true,
+    },
+    priority:{
+        type:String,
     },
     status: {
         type: String,
@@ -21,4 +32,8 @@ const taskSchema = Schema({
         type: Date,
         default: Date.now,
     }
-})
+});
+
+const Task = mongoose.model("Task", taskSchema);
+
+export default Task;
