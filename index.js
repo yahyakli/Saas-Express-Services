@@ -4,6 +4,7 @@ import  mongoose from "mongoose";
 import dotenv from "dotenv";
 import projectRoutes from './routes/projectRoutes.js';
 import projectMemberRoutes from "./routes/projectMemberRoutes.js";
+import taskRoutes from './routes/taskRoutes.js';
 dotenv.config();
 
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/projects', projectMemberRoutes);
+app.use('/api/v1/tasks', taskRoutes);
 
 
 const startServer = () => {
