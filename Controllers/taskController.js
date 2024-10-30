@@ -1,6 +1,4 @@
 import Task from '../model/Task.js';
-import TaskFile from '../model/taskFile.js';
-import TaskComment from '../model/taskComment.js';
 
 const TaskService = {
     getAllTasks: async () => {
@@ -42,22 +40,6 @@ const TaskService = {
         const task = await Task.findByIdAndDelete(taskId);
         return task ? true : false;
     },
-
-    addFileToTask: async (taskId, file_url, uploaded_by) => {
-        const task = await Task.findById(taskId);
-        if (!task) return null;
-
-        const taskFile = new TaskFile({ task_id: taskId, file_url, uploaded_by });
-        return await taskFile.save();
-    },
-
-    addCommentToTask: async (taskId, user_id, comment) => {
-        const task = await Task.findById(taskId);
-        if (!task) return null;
-
-        const taskComment = new TaskComment({ task_id: taskId, user_id, comment });
-        return await taskComment.save();
-    }
 };
 
 export default TaskService;

@@ -1,9 +1,28 @@
 import Project from "../model/Project.js";
+import axios from "axios";
 
 // Create a new project
 export const createProject = async (req, res) => {
     try {
         const { name, description, ownerId, teamId, startDate, endDate, status } = req.body;
+        const token = req.headers.authorization?.split(' ')[1];
+
+        const userResponse = await axios.get(`http://localhost:9090/api/v1/auth/user/${ownerId}`);
+        if (!userResponse.data) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const teamResponse = await axios.get(
+            `http://localhost:9090/api/v1/teams/${teamId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }
+        );
+        if (!teamResponse.data) {
+            return res.status(404).json({ message: 'Team not found' });
+        }
 
         const newProject = new Project({
             name,
@@ -48,11 +67,29 @@ export const getProjectById = async (req, res) => {
 // Update a project
 export const updateProject = async (req, res) => {
     try {
-        const { name, description, owner, team, startDate, endDate, status } = req.body;
+        const { name, description, ownerId, teamId, startDate, endDate, status } = req.body;
+        const token = req.headers.authorization?.split(' ')[1];
+
+        const userResponse = await axios.get(`http://localhost:9090/api/v1/auth/user/${ownerId}`);
+        if (!userResponse.data) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const teamResponse = await axios.get(
+            `http://localhost:9090/api/v1/teams/${ownerId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }
+        );
+        if (!teamResponse.data) {
+            return res.status(404).json({ message: 'Team not found' });
+        }
 
         const updatedProject = await Project.findByIdAndUpdate(
             req.params.id,
-            { name, description, owner, team, startDate, endDate, status },
+            { name, description, ownerId, teamId, startDate, endDate, status },
             { new: true }
         );
 
